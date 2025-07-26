@@ -1,0 +1,62 @@
+﻿IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSearchBox_SDRs_SMS]') AND type in (N'P', N'PC'))
+  exec('
+  CREATE PROC [dbo].[spSearchBox_SDRs_SMS]    
+       @SearchingFor AS NVARCHAR(60),             
+       @UserID AS BIGINT              
+       
+WITH ENCRYPTION
+AS 
+   
+SET NOCOUNT ON
+
+--Local variables       
+DECLARE @SQL AS nVARCHAR(MAX)  
+DECLARE @InnerQuery1 NVARCHAR(MAX) = ''
+DECLARE @CC AS NVARCHAR(60); -- country code   
+   
+	--Get Country Code from CDR Settings
+	SELECT @CC = CountryCode FROM [C5CDR_V5].dbo.CDRSettings 
+    
+    --Settings for mobile number length 
+	IF LEN(@SearchingFor)=10 AND ISNUMERIC(@SearchingFor)=1    
+	BEGIN 
+       SET @SearchingFor  = CONVERT(VARCHAR,@CC) + CONVERT(VARCHAR,@SearchingFor ) 
+	END   
+	--Query to get the specific table from the SDR for passed SDR Number
+	SELECT @InnerQuery1 =  REPLACE(stuff((SELECT  ' UNION ALL SELECT TOP(1) spm.ServiceProviderCode+''-''+spc.CircleCode AS ServiceProviderName,
+																	MobileNumber,FirstName,MiddleName,LastName,
+																	PresentAddress,PermanentAddress,Place,
+																	Category,DateOfActivation 
+															FROM C5SDR_V5.dbo.['+cast(name AS varchar(200))+'] sdr
+															INNER JOIN C5CDR_V5.dbo.ServiceProviderCircleMaster spc ON sdr.ServiceProviderCircleMasterID = spc.ServiceProviderCircleMasterID
+															INNER JOIN C5CDR_V5.dbo.ServiceProviderMaster spm ON sdr.ServiceProviderMasterID = spm.ServiceProviderMasterID
+															WHERE MobileNumber = '''+@SearchingFor +''' 
+															ORDER BY DateOfActivation DESC' AS [text()] 
+	FROM C5SDR_V5.sys.tables t
+	WHERE 
+	(SUBSTRING(t.name,1,6) IN (SELECT SUBSTRING(Item,3,2)+'_SDR' FROM C5SDR_V5.dbo.f_Split(''+@SearchingFor+'',',')))
+	FOR xml path(''), root('MyString'), type).value('/MyString[1]','varchar(max)'),1,10,''),'&#x0D;','');
+	
+	--Condition check for if the series table does not exists then get the result from view else get from specific series table
+	IF ISNULL(@InnerQuery1,'') = ''
+	BEGIN
+		SET @SQL = N' SELECT TOP(1) spc.CircleCode+''-''+spm.ServiceProviderCode AS ServiceProviderName,
+									MobileNumber,FirstName,MiddleName,LastName,
+									PresentAddress,PermanentAddress,Place,
+									Category,DateOfActivation   
+					  FROM  C5SDR_V5..SDRDetails sdr WITH (NOLOCK) 
+					  INNER JOIN C5CDR_V5.dbo.ServiceProviderCircleMaster spc ON sdr.ServiceProviderCircleMasterID = spc.ServiceProviderCircleMasterID
+					  INNER JOIN C5CDR_V5.dbo.ServiceProviderMaster spm ON sdr.ServiceProviderMasterID = spm.ServiceProviderMasterID
+					  WHERE MobileNumber = '''+@SearchingFor +''' 
+					  ORDER BY DateOfActivation DESC';  
+	    PRINT @SQL
+	END
+	ELSE
+	BEGIN
+		PRINT(@InnerQuery1);
+		SET @SQL = @InnerQuery1;
+	END
+   
+   --Execute query    
+   EXECUTE sp_executesql @SQL, N'@SearchingFor NVARCHAR(60)', @SearchingFor = @SearchingFor
+   ')

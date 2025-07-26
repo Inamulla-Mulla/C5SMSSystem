@@ -1,0 +1,105 @@
+﻿IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spC5SMSUserManagement]') AND type in (N'P', N'PC'))
+exec('
+Create PROCEDURE [dbo].[spC5SMSUserManagement]    
+          @@SMSUserID INT,         
+          @@Name as nvarchar(50),           
+          @@Designation varchar(30), 
+          @@Rank varchar(30),          
+          @@Department varchar(30),           
+          @@Office varchar(30),
+          @@Address varchar(255),         
+          @@City varchar(30),         
+          @@State varchar(30),          
+          @@Country varchar(30), 
+          @@Privileges varchar(255),    
+          @@PhoneNumber varchar(25),  
+          @@CreatedDateTime DATETIME,  
+		  @@Validity as varchar(20),           
+          @@Limit int = null,       
+          @@AMDFlag int
+
+		  WITH ENCRYPTION
+      AS  
+    
+          --select @@AMDFlag          
+          IF @@AMDFlag = 1 --ADD          
+  BEGIN       
+      -- Execute the INSERT statement.    
+      INSERT INTO dbo.SMSUser (Name,
+      Designation,
+      Rank,
+      Department,
+      Office,
+      Address,
+      City,
+      State,
+      Country,
+      Privileges,
+      CreatedDateTime) 
+      VALUES (@@Name ,
+      @@Designation , 
+      @@Rank ,          
+      @@Department ,           
+      @@Office ,
+      @@Address ,         
+      @@City ,         
+      @@State ,          
+      @@Country,
+      @@Privileges,
+      @@CreatedDateTime); 
+      
+      Set @@SMSUserID = IDENT_CURRENT(''SMSUser''); 
+      
+      INSERT INTO dbo.SMSUserPhone
+              ( SMSUserID, PhoneNumber )
+      VALUES  ( @@SMSUserID,@@PhoneNumber );     
+
+	  INSERT INTO dbo.SMSValidity
+              ( SMSUserID, Validity, Limit )
+      VALUES  ( @@SMSUserID, @@Validity, @@Limit ) 
+   
+  END     
+          ELSE            
+  IF @@AMDFlag = 2 --MOD      
+  BEGIN       
+    
+      -- Execute the UPDATE statement.    
+      UPDATE dbo.SMSUser  
+   SET Name = @@Name, Designation = @@Designation, Rank = @@Rank, 
+   Department = @@Department,  Office = @@Office, Address = @@Address,  
+        City = @@City, State = @@State, Country = @@Country, Privileges = @@Privileges, CreatedDateTime = @@CreatedDateTime           
+   WHERE SMSUserID = @@SMSUserID;  
+   
+   --UPDATE dbo.SMSUserPhone SET PhoneNumber = @@PhoneNumber WHERE SMSUserID = @@SMSUserID;
+    
+	UPDATE dbo.SMSValidity SET Validity = @@Validity, Limit = @@Limit WHERE SMSUserID = @@SMSUserID
+
+  END     
+          ELSE            
+  IF @@AMDFlag = 3 --DELETE       
+  BEGIN       
+	  
+	  DELETE FROM dbo.SMSUserPhone      
+      WHERE SMSUserID = @@SMSUserID;
+
+	  DELETE FROM dbo.SMSValidity      
+      WHERE SMSUserID = @@SMSUserID
+	  
+      DELETE FROM dbo.SMSUser      
+      WHERE SMSUserID = @@SMSUserID;    
+    
+  END     
+    
+          -- Test the error value.
+          IF @@ERROR <> 0 
+  BEGIN       
+     -- Return 0 to the calling program to indicate failure.      
+     RETURN(1);        
+     --SET @@SUCCESS = 1;      
+  END     
+          ELSE            
+  BEGIN       
+     -- Return 0 to the calling program to indicate success.      
+     RETURN(0);        
+     --SET @@SUCCESS = 0;      
+  END' )

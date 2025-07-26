@@ -1,0 +1,48 @@
+﻿IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSMSRequests]') AND type in (N'P', N'PC'))
+exec(' CREATE Proc [dbo].[spSMSRequests] 
+	@MessageID bigint = 0,
+	@SenderNumber varchar(20),
+	@ReceivedDateTime DATETIME ,
+	@Message nvarchar(640),
+	@MMSLink nvarchar(1000),
+	@MMSCode nvarchar(10),
+	@Status varchar(10),
+	@RequestType varchar(10),
+	@AccessType varchar(15)
+
+	WITH ENCRYPTION
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+	IF @MessageID = 0
+	  BEGIN			 
+		IF((SELECT COUNT(*) FROM SMSUserPhone sup
+					 INNER JOIN SMSUser su ON su.SMSUserID = sup.SMSUserID
+					 -- NOTE: To use CONTAINS Statement SMSUser Table must have FULL-TEXT index Defined on Privileges column.
+					 WHERE sup.PhoneNumber=@SenderNumber AND CONTAINS(su.PRIVILEGES,@RequestType)) > 0)
+			BEGIN
+			 SET @AccessType = ''Authorized'';
+			END
+		ELSE 
+			Begin
+			 SET @Status = ''Cancelled'';	
+			END
+		
+		-- Insert statements for procedure here
+		INSERT INTO dbo.SMSRequests
+				( 
+					SenderNumber ,ReceivedDateTime ,[Message] ,MMSLink ,MMSCode ,[Status] ,RequestType ,AccessType
+				)
+		VALUES  ( 
+					@SenderNumber ,@ReceivedDateTime ,@Message ,@MMSLink ,@MMSCode ,@Status ,@RequestType ,@AccessType
+				);
+	  END
+	ELSE
+		IF @MessageID > 0
+		  BEGIN
+			UPDATE dbo.SMSRequests   
+				SET Status = @Status           
+				WHERE MessageID = @MessageID;
+		  END  
+END')

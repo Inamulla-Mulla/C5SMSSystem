@@ -1,0 +1,152 @@
+﻿<UserControl x:Name="uctrlSMSMonitor" x:Class="C5SMSSystem.SMSMonitor"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"  
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             xmlns:assets="clr-namespace:C5SMSSystem"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <assets:MultiParametersConverter x:Key="MultiParamConv"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <dx:DXTabControl x:Name="c5SMSMonitorTabControl" SelectedIndex="0">
+            <dx:DXTabControl.View>
+                <dx:TabControlMultiLineView HeaderLocation="Top"/>
+            </dx:DXTabControl.View>
+            <dx:DXTabItem Header="Inbox">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="From Date :  "  />
+                        <TextBlock Text="To Date :  " Grid.Column="3"  />
+                        <dxe:DateEdit x:Name="inFrmDate" 
+                                      EditValue="{Binding InboxFromDate,Mode=TwoWay}" 
+                                      Mask="d"
+                                      MaskUseAsDisplayFormat="True"
+                                      MaxValue="{Binding Path=MaxDate, Mode=OneWay}" 
+                                      AllowNullInput="False" ShowClearButton="False" 
+                                      IsTextEditable="False" 
+                                      Grid.Column="1" Margin="0" MinWidth="120" LostFocus="inFrmDate_Validate"/>
+                        <dxe:DateEdit x:Name="inToDate" 
+                                      EditValue="{Binding InboxToDate,Mode=TwoWay}"
+                                      Mask="d"
+                                      MaskUseAsDisplayFormat="True"
+                                      MaxValue="{Binding Path=MaxDate, Mode=OneWay}" 
+                                      AllowNullInput="False" ShowClearButton="False" 
+                                      IsTextEditable="False" 
+                                      Grid.Column="4" Margin="0" MinWidth="120" LostFocus="inToDate_Validate"/>
+                        <Button x:Name="inBtnOkay" Grid.Column="6" Content="OK" Width="60" Command="{Binding Path=FilterInboxCommand}" />
+                    </Grid>
+                    <dxg:GridControl Margin="0,10,0,0" Grid.Row="1" x:Name="grdReceivedSMS" ItemsSource="{Binding ReceivedMessages,UpdateSourceTrigger=PropertyChanged}" AutoPopulateColumns="False"
+                                                 MaxHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=ActualHeight}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Header="Sent By" FieldName="Sender" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Message" FieldName="Message" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Received Date Time" FieldName="ReceivedDateTime" ReadOnly="True" EditSettings="{dxe:DateSettings DisplayFormat=G}"  AllowEditing="False"/>
+                            <dxg:GridColumn Header="Status" FieldName="Status" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Request Type" FieldName="RequestType" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Authorization" FieldName="AccessType" ReadOnly="True"/>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowGroupPanel="False" ShowTotalSummary="True" AutoWidth="True" WaitIndicatorType="Panel" AllowCascadeUpdate="True"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <Button x:Name="btnReceivedMsgPrint" Content="Print/Export" Grid.Row="2" Command="{Binding Path=PrintExportCommand, Mode=Default}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10,0,0" MinWidth="80">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource MultiParamConv}">
+                                <Binding ElementName="grdReceivedSMS" Path="View"></Binding>
+                                <Binding ElementName="uctrlSMSMonitor"></Binding>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                </Grid>
+            </dx:DXTabItem>
+
+            <dx:DXTabItem Header="Sent">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="From Date :  "  />
+                        <TextBlock Text="To Date :  " Grid.Column="3"  />
+                        <dxe:DateEdit x:Name="stFrmDate" 
+                                      EditValue="{Binding StboxFromDate,Mode=TwoWay}" 
+                                      Mask="d"
+                                      MaskUseAsDisplayFormat="True"
+                                      MaxValue="{Binding Path=MaxDate, Mode=OneWay}" 
+                                      AllowNullInput="False" ShowClearButton="False" 
+                                      IsTextEditable="False" 
+                                      Grid.Column="1" Margin="0" MinWidth="120" LostFocus="stFrmDate_LostFocus"/>
+                        <dxe:DateEdit x:Name="stToDate" 
+                                      EditValue="{Binding StboxToDate,Mode=TwoWay}"
+                                      Mask="d"
+                                      MaskUseAsDisplayFormat="True"
+                                      MaxValue="{Binding Path=MaxDate, Mode=OneWay}" 
+                                      AllowNullInput="False" ShowClearButton="False" 
+                                      IsTextEditable="False" 
+                                      Grid.Column="4" Margin="0" MinWidth="120" LostFocus="stToDate_LostFocus"/>
+                        <Button x:Name="stBtnOkay" Grid.Column="6" Content="OK" Width="60" Command="{Binding Path=FilterSentboxCommand}" />
+                    </Grid>
+                    <dxg:GridControl Margin="0,10,0,0" Grid.Row="1" x:Name="grdSentLog" ItemsSource="{Binding SentMessages,UpdateSourceTrigger=PropertyChanged}" AutoPopulateColumns="False"
+                                                 MaxHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=ActualHeight}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Header="Sent To" FieldName="Sender" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Request Number" FieldName="RequestNumber" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Sent Message" FieldName="SentMessage" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Sent Status" FieldName="SentStatus" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Sent Date Time" FieldName="SentDateTime" ReadOnly="True" EditSettings="{dxe:DateSettings DisplayFormat=G}" AllowEditing="False"/>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowGroupPanel="False" AutoWidth="True" WaitIndicatorType="Panel" AllowCascadeUpdate="True"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <Button x:Name="btnSentMsgPrint" Content="Print/Export" Grid.Row="2" Command="{Binding Path=PrintExportCommand, Mode=Default}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10,0,0" MinWidth="80">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource MultiParamConv}">
+                                <Binding ElementName="grdSentLog" Path="View"></Binding>
+                                <Binding ElementName="uctrlSMSMonitor"></Binding>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Label Grid.Row="2"  HorizontalAlignment="Left" Margin="0,8,0,0" Name="lblMessageCount" Content="{Binding Path=SentMsgsCount}" VerticalAlignment="Top" FontWeight="Bold" />
+                </Grid>
+            </dx:DXTabItem>
+        </dx:DXTabControl>
+    </Grid>
+</UserControl>

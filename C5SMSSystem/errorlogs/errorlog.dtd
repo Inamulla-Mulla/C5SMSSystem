@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!ELEMENT errorlog (exception)>
+<!ELEMENT exception (time, description, method, helplink, exception)>
+<!ELEMENT time (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT method (#PCDATA)>
+<!ELEMENT helplink (#PCDATA)>
+<!ELEMENT trace (#PCDATA)>

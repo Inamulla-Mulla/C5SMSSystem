@@ -1,0 +1,191 @@
+﻿<Window x:Name="winC5SMSMain" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" xmlns:dxn="http://schemas.devexpress.com/winfx/2008/xaml/navbar"  x:Class="C5SMSSystem.C5SMSMain"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:C5SMSSystem"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:crtls="clr-namespace:C5SMSSystem.Controls"
+        xmlns:assets="clr-namespace:C5SMSSystem"
+        Height="600" Width="600" WindowState="Maximized" WindowStartupLocation="CenterScreen" MinHeight="600" MinWidth="600"
+        Icon="/C5SMSSystem;component/Resources/smslogo_24.png" >
+    <Window.Resources>
+        <assets:ExpHeaderResizeConverter x:Key="DialogResizeConverter"/>
+    </Window.Resources>
+    <Grid SnapsToDevicePixels="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!--<RowDefinition Height="Auto"/>-->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid SnapsToDevicePixels="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Margin="10,10,0,10" Name="btnConnect" Command="{Binding Path=ConnectCommand}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="85">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Content" Value="Connect" />
+                        <Setter Property="ToolTip" Value="Disconnected" />
+                        <Style.Triggers>
+                            <DataTrigger Binding ="{Binding Path=DataContext.ConnectionStatus,ElementName=winC5SMSMain}" Value="true">
+                                <Setter Property="Content" Value="Disconnect"/>
+                                <Setter Property="ToolTip" Value="Connected" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Label Grid.Column="1" Content="Connection Status :" Margin="10,10,0,10" Name="lblStatus" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Label Grid.Column="1" Margin="118,10,0,10" Name="lblConnectionStatus" HorizontalAlignment="Left" VerticalAlignment="Center" Width="20" Height="20">
+                <Label.Style>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="Background" Value="Red" />
+                        <Setter Property="ToolTip" Value="Disconnected" />
+                        <Style.Triggers>
+                            <DataTrigger Binding ="{Binding Path=DataContext.ConnectionStatus,ElementName=winC5SMSMain}" Value="true">
+                                <Setter Property="Background" Value="Green"/>
+                                <Setter Property="ToolTip" Value="Connected" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+            <Label Grid.Column="2" Content="Select Port :" Margin="10,10,0,10" Name="lblReceivingPort" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <dxe:ComboBoxEdit Grid.Column="3" x:Name="cbeComPorts" Margin="5,10,0,10" MinWidth="100px" HorizontalAlignment="Left" VerticalAlignment="Center" ItemsSource="{Binding Path=ComPorts,Mode=TwoWay}" SelectedIndex="{Binding Path=ComIndex, Mode=TwoWay}" IsTextEditable="False">
+                <dxe:ComboBoxEdit.Style>
+                    <Style TargetType="{x:Type dxe:ComboBoxEdit}">
+                        <Setter Property="IsReadOnly" Value="False" />
+                        <Style.Triggers>
+                            <DataTrigger Binding ="{Binding Path=DataContext.ConnectionStatus,ElementName=winC5SMSMain}" Value="true">
+                                <Setter Property="IsReadOnly" Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </dxe:ComboBoxEdit.Style>
+            </dxe:ComboBoxEdit>
+        </Grid>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="PART_lockIconBorder"
+                    Grid.Column="1"
+                    BorderThickness="1"
+                    VerticalAlignment="Center"
+                    IsEnabled="{Binding Path=LockStatus,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"                      
+                    HorizontalAlignment="Right" Margin="0,10,10,10">
+                <Image x:Name="lockIcon"
+                    Stretch="Fill"
+                    Width="20"
+                    Height="20" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ToolTip="Lock"  
+                    
+                    Source="pack://application:,,,/C5SMSSystem;component/Resources/lock.png">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <ei:CallMethodAction MethodName="LockIconMouseLeftButtonDown" TargetObject="{Binding Path=DataContext, ElementName=winC5SMSMain}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Image>
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BorderBrush" Value="White" />
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding ="{Binding ElementName=lockIcon, Path=IsMouseOver}" Value="true"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderBrush" Value="Gray" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+            <Border x:Name="PART_PortSettings"
+                    Grid.Column="2"
+                    BorderThickness="1"
+                    VerticalAlignment="Center"
+                    IsEnabled="True"                      
+                    HorizontalAlignment="Right" Margin="0,10,10,10">
+                <Image x:Name="portSettings"
+                    Stretch="Fill"
+                    Width="20"
+                    Height="20" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ToolTip="Port Settings"  
+                    
+                    Source="pack://application:,,,/C5SMSSystem;component/Resources/maintenance_32.png">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <ei:CallMethodAction MethodName="PortSettingsMouseLeftButtonDown" TargetObject="{Binding Path=DataContext, ElementName=winC5SMSMain}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Image>
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BorderBrush" Value="White" />
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding ="{Binding ElementName=portSettings, Path=IsMouseOver}" Value="true"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderBrush" Value="Gray" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </Grid>
+        <Grid SnapsToDevicePixels="True" Grid.Row="1">
+            <dxn:NavBarControl x:Name="navC5BarControl">
+                <dxn:NavBarControl.View>
+                    <dxn:NavigationPaneView x:Name="navC5PaneView" IsExpandButtonVisible="False"  IsExpanded="True" MaxVisibleGroupCount="0" GroupDisplayMode="ImageAndText" />
+                </dxn:NavBarControl.View>
+                <dxn:NavBarControl.Groups>
+                    <dxn:NavBarGroup Header="SMS Monitor" ImageSource="/C5SMSSystem;component/Resources/monitor_32.png" DisplaySource="Content" GroupScrollMode="None">
+                        <dxn:NavBarGroup.Content>
+                            <local:SMSMonitor x:Name="smsMonitor" Margin="5"/>
+                        </dxn:NavBarGroup.Content>
+                    </dxn:NavBarGroup>
+
+                    <dxn:NavBarGroup Header="Maintenance/Group SMS" ImageSource="/C5SMSSystem;component/Resources/maintenance_32.png" DisplaySource="Content" GroupScrollMode="None">
+                        <dxn:NavBarGroup.Content>
+                            <local:GroupSMS x:Name="groupSMS" Margin="5"/>
+                        </dxn:NavBarGroup.Content>
+                    </dxn:NavBarGroup>
+
+                    <dxn:NavBarGroup Header="User Management" ImageSource="/C5SMSSystem;component/Resources/usermanage_32.png" DisplaySource="Content" GroupScrollMode="None">
+                        <dxn:NavBarGroup.Content>
+                            <local:UserManagement x:Name="userManagement" Margin="5"/>
+                        </dxn:NavBarGroup.Content>
+                    </dxn:NavBarGroup>
+
+                    <dxn:NavBarGroup Header="Test Messaging" ImageSource="/C5SMSSystem;component/Resources/messaging_32.png" DisplaySource="Content" GroupScrollMode="None">
+                        <dxn:NavBarGroup.Content>
+                            <local:Testing x:Name="smsTesting" Margin="5" />
+                        </dxn:NavBarGroup.Content>
+                    </dxn:NavBarGroup>
+                </dxn:NavBarControl.Groups>
+            </dxn:NavBarControl>
+        </Grid>
+        <crtls:DialogManager x:Name="unLockDialog" DataContext="{Binding UnlockDialog}" IsOpen="{Binding IsOpen}" Title="" 
+            DialogHeight="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=ActualHeight,Converter={StaticResource DialogResizeConverter}}"  
+            DialogWidth="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=ActualWidth,Converter={StaticResource DialogResizeConverter}}"  
+            DialogWindowStartupLocation="CenterOwner" DialogWindowStyle="None" CloseCommand="{Binding CloseCommand}"   />
+
+        <crtls:DialogManager x:Name="portSettingsDialog" DataContext="{Binding PortSettingsVM}" IsOpen="{Binding IsOpen}" Title="" 
+            DialogHeight="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=ActualHeight,Converter={StaticResource DialogResizeConverter}}"  
+            DialogWidth="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=ActualWidth,Converter={StaticResource DialogResizeConverter}}"  
+            DialogWindowStartupLocation="CenterOwner" DialogWindowStyle="None" CloseCommand="{Binding CloseCommand}"   />
+    </Grid>
+</Window>

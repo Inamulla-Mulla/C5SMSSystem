@@ -1,0 +1,43 @@
+﻿<Window x:Class="C5SMSSystem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="C5 SMS" Height="430" Width="688">
+    <Grid Margin="10,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Button x:Name="btnSend" Content="Send" Height="23" HorizontalAlignment="Left" Margin="231,45,0,0" VerticalAlignment="Top" Width="75" Click="btnSend_Click" />
+            <TextBox Height="23" HorizontalAlignment="Left" Margin="105,45,0,0" Name="txtNumber" VerticalAlignment="Top" Width="120" MaxLength="12" />
+            <TextBox Height="114" HorizontalAlignment="Left" Margin="105,91,20,0" Name="txtMessage" VerticalAlignment="Top" Width="201" MaxLength="200" AcceptsReturn="True" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            <TextBlock Height="23" HorizontalAlignment="Left" Margin="11,49,0,0" Name="lblNumber" Text="Mobile number :" VerticalAlignment="Top" />
+            <TextBlock Height="23" HorizontalAlignment="Left" Margin="21,94,0,0" Name="lblMessage" Text="Message Test :" VerticalAlignment="Top" />
+            <Button Content="Connect" Height="23" HorizontalAlignment="Left" Margin="12,12,0,0" Name="btnConnect" VerticalAlignment="Top" Width="75" Click="btnConnect_Click" />
+            <Label Content="D" HorizontalAlignment="Left" Margin="93,11,0,0" Name="lblConnectionStatus" ToolTip="Disconnected" VerticalAlignment="Top" Background="Red"  AllowDrop="True" Foreground="White" FontWeight="ExtraBold" />
+            <Button Content="Check Balance" Height="23" HorizontalAlignment="Left" Margin="544,45,0,0" Name="btnBalance" VerticalAlignment="Top" Width="88" Click="btnBalance_Click" />
+            <TextBox Height="23" HorizontalAlignment="Left" Margin="418,45,0,0" MaxLength="12" Name="txtServiceCode" VerticalAlignment="Top" Width="120" />
+            <TextBox AcceptsReturn="True" Height="114" HorizontalAlignment="Left" Margin="418,91,20,0" MaxLength="200" Name="txtBalanceMsg" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="201" IsReadOnly="True" />
+            <TextBlock Height="23" HorizontalAlignment="Left" Margin="338,49,0,0" Name="lblServiceCode" Text="Service Code :" VerticalAlignment="Top" />
+            <TextBlock Height="23" HorizontalAlignment="Left" Margin="339,94,0,0" Name="lblBalMsg" Text="Balance Msg :" VerticalAlignment="Top" />
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock  HorizontalAlignment="Left"  Name="lblRecMsg" Text="Received Messages :" VerticalAlignment="Top" />
+            <DataGrid Grid.Row="2" AutoGenerateColumns="True" Name="dgDisplayMessages" IsReadOnly="True" />
+        </Grid>
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock  HorizontalAlignment="Left"  Name="lblSentMsg" Text="Sent Log :" VerticalAlignment="Top" />
+            <DataGrid Grid.Row="2" AutoGenerateColumns="True" Name="dgDisplayLog" IsReadOnly="True" />
+        </Grid>
+    </Grid>
+</Window>
