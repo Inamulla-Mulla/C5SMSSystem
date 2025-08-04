@@ -1,0 +1,371 @@
+﻿<UserControl x:Name="ucUserManage" x:Class="C5SMSSystem.UserManagement"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"  
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             xmlns:req="clr-namespace:C5SMSSystem"
+             xmlns:assets="clr-namespace:C5SMSSystem.Assets"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <req:MultiParametersConverter x:Key="MultiParamConv"/>
+        <req:CollectionToIsCheckedConverter x:Key="isCheckedConverter" />
+        <req:CollectionToIsThreeStateConverter x:Key="isThreeStateConverter" />
+        <assets:NotNullOrEmptyToBoolConverter x:Key="NotNullOrEmptyToBool"/>
+        <assets:NotEqualToBoolConverter x:Key="NotEqualToBool" />
+    </UserControl.Resources>
+
+    <Grid SnapsToDevicePixels="True">
+        <dx:DXTabControl x:Name="userManageTabControl">
+            <dx:DXTabControl.View>
+                <dx:TabControlMultiLineView HeaderLocation="Top"/>
+            </dx:DXTabControl.View>
+            <dx:DXTabItem Header="Create">
+                <Grid SnapsToDevicePixels="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid SnapsToDevicePixels="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <ContentControl Template="{StaticResource HeaderTemplate}" Content="Details" SnapsToDevicePixels="True" />
+                        <Grid SnapsToDevicePixels="True" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Name :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="1" Content="Phone Number :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="2" Content="Designation :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="3" Content="Rank :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="4"  Content="Department :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="5" Content="Office :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="6" Content="Address :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="7" Content="City :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="8" Content="State :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Label Grid.Row="9" Content="Country :" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" x:Name="txtName" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="50" Validation.ErrorTemplate="{StaticResource errorTemplateSilverlightStyle}">
+                                <TextBox.Text>
+                                    <Binding Path="SingleSMSUser.UserName" UpdateSourceTrigger="LostFocus" ValidatesOnExceptions="True" ValidatesOnDataErrors="True" Mode="TwoWay" >
+                                        <Binding.ValidationRules>
+                                            <req:Required x:Name="UserNameRequired" ValidatesOnTargetUpdated="True"
+                                              Message="User name cannot be empty"/>
+                                            <ExceptionValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Grid.Column="1" Grid.Row="1" x:Name="txtPhoneNumber" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="25" PreviewTextInput="NumericOnly" Validation.ErrorTemplate="{StaticResource errorTemplateSilverlightStyle}">
+                                <TextBox.Text>
+                                    <Binding Path="SingleSMSUser.UserPhoneNumber" UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True" ValidatesOnDataErrors="True" Mode="TwoWay" >
+                                        <Binding.ValidationRules>
+                                            <req:Required x:Name="PhoneNoRequired" ValidatesOnTargetUpdated="True"
+                                              Message="Phone number cannot be empty"/>
+                                            <ExceptionValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox Grid.Column="1" Grid.Row="2" x:Name="txtDesignation" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="30" Text="{Binding Path=SingleSMSUser.Designation,Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" x:Name="txtRank" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="30" Text="{Binding Path=SingleSMSUser.Rank,Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Grid.Row="4" x:Name="txtDepartment" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="30" Text="{Binding Path=SingleSMSUser.Department,Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Grid.Row="5" x:Name="txtOffice" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="30" Text="{Binding Path=SingleSMSUser.Office,Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Grid.Row="6" x:Name="txtAddress" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="250" Text="{Binding Path=SingleSMSUser.Address,Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Grid.Row="7" x:Name="txtCity" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="30" Text="{Binding Path=SingleSMSUser.City,Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Grid.Row="8" x:Name="txtState" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="30" Text="{Binding Path=SingleSMSUser.State,Mode=TwoWay}"/>
+                            <TextBox Grid.Column="1" Grid.Row="9" x:Name="txtCountry" VerticalAlignment="Stretch" Margin="5,7,30,6" MaxLength="30" Text="{Binding Path=SingleSMSUser.Country,Mode=TwoWay}"/>
+
+                        </Grid>
+                    </Grid>
+                    <ContentControl Grid.Column="1" Template="{StaticResource VerticalSeparatorTemplate}" />
+                    <Grid SnapsToDevicePixels="True" Grid.Column="2" Margin="10,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <ContentControl Template="{StaticResource HeaderTemplate}" Content="Privileges" SnapsToDevicePixels="True" />
+                        <Grid SnapsToDevicePixels="True" Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel SnapsToDevicePixels="True">
+                                <dxe:ListBoxEdit x:Name="chkLstUserPrivileges" Margin="20,10" ShowBorder="False" EditValue="{Binding Path=SelectedPrivileges,Mode=TwoWay}">
+                                    <dxe:ListBoxEditItem Content="SDR"/>
+                                    <dxe:ListBoxEditItem Content="STD"/>
+                                    <dxe:ListBoxEditItem Content="ISD"/>
+                                    <dxe:ListBoxEditItem Content="Series"/>
+                                    <dxe:ListBoxEditItem Content="CellID"/>
+                                    <dxe:ListBoxEditItem Content="SUS"/>
+                                    <dxe:ListBoxEditItem Content="TID"/>
+
+                                    <dxe:ListBoxEdit.StyleSettings>
+                                        <dxe:CheckedListBoxEditStyleSettings/>
+                                    </dxe:ListBoxEdit.StyleSettings>
+                                </dxe:ListBoxEdit>
+                            </StackPanel>
+                            <Grid SnapsToDevicePixels="True" Grid.Row="1" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <ContentControl Template="{StaticResource HeaderTemplate}" Content="Message Validity" SnapsToDevicePixels="True" />
+                                <Grid SnapsToDevicePixels="True" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="1" Margin="20,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="50"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="SMS Validity : "/>
+                                    <dxe:ComboBoxEdit x:Name="cboSMSValidity" Grid.Column="1" MinWidth="150" IsTextEditable="False"  NullText="Select SMS Validity" NullValue="-1"  EditValue="{Binding Path=SelectedSMSValidity,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                                        <dxe:ComboBoxEditItem Content="Per Day"/>
+                                        <dxe:ComboBoxEditItem Content="Per Week"/>
+                                        <dxe:ComboBoxEditItem Content="Per Month"/>
+                                        <dxe:ComboBoxEditItem Content="Unlimited"/>
+                                        <dxe:ComboBoxEdit.StyleSettings>
+                                            <dxe:ComboBoxStyleSettings/>
+                                        </dxe:ComboBoxEdit.StyleSettings>
+                                    </dxe:ComboBoxEdit>
+                                    <TextBlock Text="SMS Limit : " Grid.Column="3"/>
+                                    <dxe:TextEdit x:Name="smsLimitCount" MinWidth="40" MaxLength="4" Grid.Column="4" NullText="Enter SMS Limit" NullValue="0" MaskType="Numeric" Mask="####">
+                                        <dxe:TextEdit.Style>
+                                            <Style TargetType="{x:Type dxe:TextEdit}">
+                                                <Setter Property="IsEnabled" Value="True" />
+                                                <Setter Property="Text" Value="{Binding SMSLimit,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding ="{Binding ElementName=cboSMSValidity, Path=EditValue}" Value="Unlimited">
+                                                        <Setter Property="IsEnabled" Value="false"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding ="{Binding ElementName=cboSMSValidity, Path=SelectedIndex}" Value="-1">
+                                                        <Setter Property="IsEnabled" Value="false"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </dxe:TextEdit.Style>
+                                    </dxe:TextEdit>
+                                </Grid>
+                            </Grid>
+                            <Button Grid.Row="2" Content="Create" x:Name="btnCreate" Command="{Binding Path=CreateCommand}" HorizontalAlignment="Right" MinWidth="80" MinHeight="40">
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="IsEnabled" Value="false" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding ElementName=txtName, Path=(Validation.HasError)}" Value="false" />
+                                                    <Condition Binding="{Binding ElementName=txtPhoneNumber, Path=(Validation.HasError)}" Value="false" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="IsEnabled" Value="true" />
+                                            </MultiDataTrigger>
+                                            <DataTrigger Binding ="{Binding ElementName=chkLstUserPrivileges, Path=SelectedIndex}" Value="-1">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding ="{Binding ElementName=cboSMSValidity, Path=SelectedIndex}" Value="-1">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                            </DataTrigger>
+
+                                            
+
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding ElementName=smsLimitCount, Path=Text, Converter={StaticResource NotNullOrEmptyToBool}}" Value="False"  />
+                                                    <Condition Binding ="{Binding ElementName=cboSMSValidity, Path=EditValue,Converter={StaticResource NotEqualToBool},ConverterParameter='Unlimited'}" Value="True"  />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </MultiDataTrigger>
+
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding ="{Binding ElementName=cboSMSValidity, Path=EditValue}" Value="Unlimited"  />
+                                                    <Condition Binding="{Binding ElementName=smsLimitCount, Path=Text, Converter={StaticResource NotNullOrEmptyToBool}}" Value="True"  />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+
+                    </Grid>
+                </Grid>
+            </dx:DXTabItem>
+
+            <dx:DXTabItem Header="Edit">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="grdSMSUpdateUsers" ItemsSource="{Binding SMSUsers,UpdateSourceTrigger=PropertyChanged}" AutoPopulateColumns="False"
+                                                 MaxHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=ActualHeight}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Header="User Name" FieldName="UserName" />
+                            <dxg:GridColumn Header="Designation" FieldName="Designation" />
+                            <dxg:GridColumn Header="Rank" FieldName="Rank"/>
+                            <dxg:GridColumn Header="Department" FieldName="Department" />
+                            <dxg:GridColumn Header="Office" FieldName="Office" />
+                            <dxg:GridColumn Header="Address" FieldName="Address" />
+                            <dxg:GridColumn Header="City" FieldName="City" />
+                            <dxg:GridColumn Header="State" FieldName="State" />
+                            <dxg:GridColumn Header="Country" FieldName="Country" />
+                            <dxg:GridColumn Header="Privileges" FieldName="Privileges" />
+                            <dxg:GridColumn Header="User Phone Number" FieldName="UserPhoneNumber" ReadOnly="True"/>
+
+                            <dxg:GridColumn Header="SMS Validity" FieldName="SMSValidity">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:ComboBoxEditSettings IsTextEditable="False" NullText="Select SMS Validity" NullValue="-1" >
+                                        <dxe:ComboBoxEditSettings.Items>
+                                            <dxe:ComboBoxEditItem Content="Per Day"/>
+                                            <dxe:ComboBoxEditItem Content="Per Week"/>
+                                            <dxe:ComboBoxEditItem Content="Per Month"/>
+                                            <dxe:ComboBoxEditItem Content="Unlimited"/>
+                                        </dxe:ComboBoxEditSettings.Items>
+                                    </dxe:ComboBoxEditSettings>
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            
+                            <dxg:GridColumn Header="SMS Limit" FieldName="SMSLimit">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings Mask="####" MaskType="Numeric"/>
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowGroupPanel="False" AutoWidth="True" WaitIndicatorType="Panel" AllowCascadeUpdate="True" />
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <Button Grid.Row="1" Content="Update" x:Name="btnUpdate" Command="{Binding Path=UpdateCommand}" Margin="0,10,0,10" HorizontalAlignment="Right" MinWidth="80"/>
+                </Grid>
+            </dx:DXTabItem>
+
+            <dx:DXTabItem Header="Delete">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="grdSMSDeleteUser" ItemsSource="{Binding SMSUsers,UpdateSourceTrigger=PropertyChanged}" AutoPopulateColumns="False" CustomUnboundColumnData="grid_CustomUnboundColumnData"
+                                                 MaxHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=ActualHeight}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn FieldName="Selected" UnboundType="Boolean" AllowSorting="False">
+                                <dxg:GridColumn.HeaderTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dxe:CheckEdit Margin="0,0,4,0" EditValueChanged="CheckEdit_EditValueChanged" >
+                                                <dxe:CheckEdit.IsThreeState>
+                                                    <MultiBinding Mode="OneWay" Converter="{StaticResource isThreeStateConverter}">
+                                                        <Binding Path="DataContext.SelectedValues" RelativeSource="{RelativeSource AncestorType=dxg:GridControl}" />
+                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=dxg:GridControl}" />
+                                                    </MultiBinding>
+                                                </dxe:CheckEdit.IsThreeState>
+
+                                                <dxe:CheckEdit.IsChecked>
+                                                    <MultiBinding Mode="OneWay" Converter="{StaticResource isCheckedConverter}">
+                                                        <Binding Path="DataContext.SelectedValues" RelativeSource="{RelativeSource AncestorType=dxg:GridControl}" />
+                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=dxg:GridControl}" />
+                                                    </MultiBinding>
+                                                </dxe:CheckEdit.IsChecked>
+                                            </dxe:CheckEdit>
+                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </dxg:GridColumn.HeaderTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="User Name" FieldName="UserName" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Designation" FieldName="Designation" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Rank" FieldName="Rank" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Department" FieldName="Department" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Office" FieldName="Office" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Address" FieldName="Address" ReadOnly="True"/>
+                            <dxg:GridColumn Header="City" FieldName="City" ReadOnly="True"/>
+                            <dxg:GridColumn Header="State" FieldName="State" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Country" FieldName="Country" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Privileges" FieldName="Privileges" ReadOnly="True"/>
+                            <dxg:GridColumn Header="User Phone Number" FieldName="UserPhoneNumber" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Created DateTime" FieldName="CreatedDateTime" ReadOnly="True" EditSettings="{dxe:DateSettings DisplayFormat=G}" AllowEditing="False"/>
+                            <dxg:GridColumn Header="SMS Validity" FieldName="SMSValidity" ReadOnly="True"/>
+                            <dxg:GridColumn Header="SMS Limit" FieldName="SMSLimit" ReadOnly="True"/>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowGroupPanel="False" AutoWidth="True" WaitIndicatorType="Panel" AllowCascadeUpdate="True" CellValueChanging="view_CellValueChanging"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <Button Grid.Row="1" Content="Delete" x:Name="btnDelete" Command="{Binding Path=DeleteCommand}" Margin="0,10,0,10" HorizontalAlignment="Right" MinWidth="80"/>
+                </Grid>
+            </dx:DXTabItem>
+
+            <dx:DXTabItem Header="Users">
+                <Grid SnapsToDevicePixels="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="grdUsers" ItemsSource="{Binding SMSUsers,UpdateSourceTrigger=PropertyChanged}" AutoPopulateColumns="False"
+                                                 MaxHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=ActualHeight}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Header="User Name" FieldName="UserName" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Designation" FieldName="Designation" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Rank" FieldName="Rank" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Department" FieldName="Department" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Office" FieldName="Office" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Address" FieldName="Address" ReadOnly="True"/>
+                            <dxg:GridColumn Header="City" FieldName="City" ReadOnly="True"/>
+                            <dxg:GridColumn Header="State" FieldName="State" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Country" FieldName="Country" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Privileges" FieldName="Privileges" ReadOnly="True"/>
+                            <dxg:GridColumn Header="User Phone Number" FieldName="UserPhoneNumber" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Created DateTime" FieldName="CreatedDateTime" ReadOnly="True" EditSettings="{dxe:DateSettings DisplayFormat=G}" AllowEditing="False"/>
+                            <dxg:GridColumn Header="SMS Validity" FieldName="SMSValidity" ReadOnly="True"/>
+                            <dxg:GridColumn Header="SMS Limit" FieldName="SMSLimit" ReadOnly="True"/>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowGroupPanel="False" AutoWidth="True" WaitIndicatorType="Panel" AllowCascadeUpdate="True"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <Button x:Name="btnUsersPrint" Content="Print/Export" Grid.Row="1" Command="{Binding Path=PrintExportCommand, Mode=Default}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10,0,0" MinWidth="80">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource MultiParamConv}">
+                                <Binding ElementName="grdUsers" Path="View"></Binding>
+                                <Binding ElementName="ucUserManage"></Binding>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                </Grid>
+            </dx:DXTabItem>
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <ei:CallMethodAction MethodName="userManageTabControlSelectionChanged" TargetObject="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </dx:DXTabControl>
+    </Grid>
+</UserControl>

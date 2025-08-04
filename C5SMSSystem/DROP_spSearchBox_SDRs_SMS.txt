@@ -1,0 +1,4 @@
+﻿IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spSearchBox_SDRs_SMS]') AND type in (N'P', N'PC'))
+  exec('
+  DROP PROCEDURE [dbo].[spSearchBox_SDRs_SMS]
+  ')

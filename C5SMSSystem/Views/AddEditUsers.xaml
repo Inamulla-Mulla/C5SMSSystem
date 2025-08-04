@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="C5SMSSystem.Views.AddEditUsers"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid x:Name="LayoutRoot" Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="97*" />
+            <ColumnDefinition Width="283*" />
+            <ColumnDefinition Width="10*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="23*" />
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="15*" />
+            <RowDefinition Height="5*" />
+            <RowDefinition Height="15*" />
+            <RowDefinition Height="118*" />
+            <RowDefinition Height="20*" />
+            <RowDefinition Height="14*" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="18*" />
+            <RowDefinition Height="18*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Circle Code :" Name="lblCircleCode" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <TextBlock Text="Circle Name :" Name="lblCircleName" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <!--<TextBox Grid.Column="2" Grid.Row="1" Height="22" Text="{Binding Path=SingleCircle.CircleID,Mode=TwoWay}" HorizontalAlignment="Left" Margin="0,0,0,5" Name="txtCircleID"  VerticalAlignment="Bottom" Width="60" IsReadOnly="True" Visibility="Collapsed" />-->
+        <TextBox Name="txtCircleCode" Grid.Column="2" DataContext="{Binding Path=CirclePageCollection.CurrentItem, Mode=TwoWay, NotifyOnValidationError=True}" Text="{Binding Path=CircleCode ,Mode=TwoWay,NotifyOnValidationError=True}" Grid.Row="2"  />
+        <TextBox Name="txtCircleName" Grid.Column="2" Grid.Row="4" DataContext="{Binding Path=CirclePageCollection.CurrentItem, Mode=TwoWay, NotifyOnValidationError=True}" Text="{Binding Path=CircleName ,Mode=TwoWay,NotifyOnValidationError=True}" />
+
+        <Grid x:Name="btnGrid" Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="118*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="118*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="118*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding Path=CirclePageCollection.HasValidationErrors}" Name="Save" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
+            <Button Content="Delete" Command="{Binding DeleteCommand}" Visibility="{Binding Path=SetPagerVisibility, Mode=OneWay}" Grid.Column="2" Name="Delete" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Grid.Column="4" Name="Cancel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Grid>
+
+        <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Margin="58,0,58,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="118*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="118*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="118*" />
+            </Grid.ColumnDefinitions>
+
+            <dxe:DataPager Name="pager" PageSize="1" DisplayMode="FirstLastPreviousNextNumeric" ShowTotalPageCount="True" Source="{Binding CirclePageCollection}" Visibility="{Binding Path=SetPagerVisibility, Mode=OneWay}" Grid.ColumnSpan="5" HorizontalContentAlignment="Center" />
+            <!--<sdk:DataPager Name="pager" PageSize="1" Source="{Binding CirclePageCollection}" Visibility="{Binding Path=SetPagerVisibility, Mode=OneWay}" Grid.ColumnSpan="5" HorizontalContentAlignment="Center" />-->
+
+        </Grid>
+    </Grid>
+</UserControl>

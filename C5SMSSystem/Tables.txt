@@ -1,0 +1,97 @@
+﻿IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSRequests]') AND type in (N'U'))
+CREATE TABLE [dbo].[SMSRequests](
+	[MessageID] [bigint] IDENTITY(1,1) NOT NULL,
+	[SenderNumber] [varchar](20) NOT NULL,
+	[ReceivedDateTime] [datetime] NOT NULL,
+	[Message] [nvarchar](640) NOT NULL,
+	[MMSLink] [nvarchar](1000) NULL,
+	[MMSCode] [nvarchar](10) NULL,
+	[Status] [varchar](10) NOT NULL,
+	[RequestType] [varchar](10) NOT NULL,
+	[AccessType] [varchar](15) NOT NULL,
+ CONSTRAINT [PK_SMSRequests] PRIMARY KEY CLUSTERED 
+(
+	[MessageID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY];
+
+IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSRequestsLog]') AND type in (N'U'))
+CREATE TABLE [dbo].[SMSRequestsLog](
+	[SMSRequestsLogID] [bigint] IDENTITY(1,1) NOT NULL,
+	[MessageID] [bigint] NOT NULL,
+	[RequestNumber] [varchar](20) NOT NULL,
+	[SentMessage] [varchar](640) NOT NULL,
+	[SentStatus] [varchar](20) NOT NULL,
+	[SentDateTime] [datetime] NOT NULL,
+ CONSTRAINT [PK_SMSRequestsLog] PRIMARY KEY CLUSTERED 
+(
+	[SMSRequestsLogID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY];
+
+IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSUser]') AND type in (N'U'))
+CREATE TABLE [dbo].[SMSUser](
+	[SMSUserID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Designation] [varchar](30) NULL,
+	[Rank] [varchar](30) NULL,
+	[Department] [varchar](30) NULL,
+	[Office] [varchar](30) NULL,
+	[Address] [varchar](255) NULL,
+	[City] [varchar](30) NULL,
+	[State] [varchar](30) NULL,
+	[Country] [varchar](30) NULL,
+	[Privileges] [varchar](255) NOT NULL,
+	[CreatedDateTime] [datetime] NOT NULL,
+ CONSTRAINT [PK_SMSUser] PRIMARY KEY CLUSTERED 
+(
+	[SMSUserID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY];
+
+IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSUserPhone]') AND type in (N'U'))
+CREATE TABLE [dbo].[SMSUserPhone](
+	[SMSUserPhoneID] [int] IDENTITY(1,1) NOT NULL,
+	[SMSUserID] [int] NOT NULL,
+	[PhoneNumber] [varchar](25) NOT NULL,
+ CONSTRAINT [PK_SMSUserPhone] PRIMARY KEY CLUSTERED 
+(
+	[SMSUserID] ASC,
+	[PhoneNumber] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY];
+
+IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSUserPhone]') AND type in (N'U'))
+SET ANSI_PADDING OFF;
+
+IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSUserPhone]') AND type in (N'U'))
+ALTER TABLE [dbo].[SMSUserPhone]  WITH CHECK ADD  CONSTRAINT [FK_SMSUserPhone_SMSUser] FOREIGN KEY([SMSUserID])
+REFERENCES [dbo].[SMSUser] ([SMSUserID]);
+
+IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSUserPhone]') AND type in (N'U'))
+ALTER TABLE [dbo].[SMSUserPhone] CHECK CONSTRAINT [FK_SMSUserPhone_SMSUser];
+
+IF Not EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SMSValidity]') AND type in (N'U'))
+
+CREATE TABLE [dbo].[SMSValidity](
+	[MessageValidityID] [int] IDENTITY(1,1) NOT NULL,
+	[Validity] [varchar](20) NOT NULL,
+	[Limit] [int] NULL,
+	[SMSUserID] [int] NOT NULL,
+ CONSTRAINT [PK_SMSValidity] PRIMARY KEY CLUSTERED 
+(
+	[MessageValidityID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY];
+
+IF Not EXISTS (SELECT * FROM sysfulltextcatalogs ftc WHERE ftc.name = N'Privileges')
+	CREATE FULLTEXT CATALOG [Privileges] WITH ACCENT_SENSITIVITY = ON AUTHORIZATION [dbo];
+
+IF Not EXISTS (SELECT * FROM sys.fulltext_indexes fti WHERE fti.object_id = OBJECT_ID(N'[SMSUser]'))
+	CREATE FULLTEXT INDEX ON [SMSUser] KEY INDEX [PK_SMSUser] ON ([Privileges]) WITH (CHANGE_TRACKING AUTO);
+
+IF ((select COLUMNPROPERTY(OBJECT_ID('dbo.SMSUser'), 'Privileges', 'IsFulltextIndexed')) <> 1)
+BEGIN
+	ALTER FULLTEXT INDEX ON [SMSUser] ADD ([Privileges]);
+	ALTER FULLTEXT INDEX ON [SMSUser] ENABLE;
+END

@@ -1,0 +1,143 @@
+﻿<UserControl x:Name="ucSMSTest" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"  x:Class="C5SMSSystem.Testing"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             mc:Ignorable="d" 
+             xmlns:assets="clr-namespace:C5SMSSystem"
+             xmlns:crtls="clr-namespace:C5SMSSystem.Controls"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <assets:MultiParametersConverter x:Key="MultiParamConv"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <dx:DXTabControl x:Name="userManageTabControl">
+            <dx:DXTabControl.View>
+                <dx:TabControlMultiLineView HeaderLocation="Top"/>
+            </dx:DXTabControl.View>
+            <dx:DXTabItem Header="Message">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="60*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="1">
+                        <Button Content="Send" Height="23" HorizontalAlignment="Right" x:Name="btnSend" VerticalAlignment="Top" Margin="0,254,0,0" Width="75" Command="{Binding Path=SendCommand}">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="IsEnabled" Value="false" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding ElementName=txtSendTo, Path=(Validation.HasError)}" Value="false" />
+                                                <Condition Binding="{Binding ElementName=txtMessage, Path=(Validation.HasError)}" Value="false" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="IsEnabled" Value="true" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <TextBox Height="23" Margin="59,42,0,0" Name="txtSendTo" VerticalAlignment="Top" HorizontalAlignment="Stretch" MaxLength="12" PreviewTextInput="NumericOnly" Validation.ErrorTemplate="{StaticResource errorTemplateSilverlightStyle}">
+                            <TextBox.Text>
+                                <Binding Path="SendToNumber" UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True" ValidatesOnDataErrors="True" Mode="TwoWay" >
+                                    <Binding.ValidationRules>
+                                        <assets:Required x:Name="PhoneNoRequired" ValidatesOnTargetUpdated="True"
+                                              Message="Phone number cannot be empty"/>
+                                        <ExceptionValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <TextBox Height="23" Margin="59,88,0,0" Name="txtMessage" AcceptsReturn="True" VerticalAlignment="Top" HorizontalAlignment="Stretch" MaxLength="150" MinHeight="150" VerticalScrollBarVisibility="Auto" Validation.ErrorTemplate="{StaticResource errorTemplateSilverlightStyle}">
+                            <TextBox.Text>
+                                <Binding Path="SendMessage" UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True" ValidatesOnDataErrors="True" Mode="TwoWay" >
+                                    <Binding.ValidationRules>
+                                        <assets:Required x:Name="MessageRequired" ValidatesOnTargetUpdated="True"
+                                              Message="Message cannot be empty"/>
+                                        <ExceptionValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <TextBlock Height="23" HorizontalAlignment="Left" Margin="4,42,0,0" Name="lblSendTo" Text="Send To :" VerticalAlignment="Top" />
+                        <TextBlock Height="23" HorizontalAlignment="Left" Margin="0,88,0,0" Name="lblMessage" Text="Message :" VerticalAlignment="Top" />
+                    </Grid>
+                    <Grid Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,88,0,0" >
+                        <Border x:Name="PART_addIconBorder" BorderThickness="1" CornerRadius="2" Height="16" Width="16">
+                            <Image x:Name="addIcon"
+                                Stretch="Fill" 
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ToolTip="Add template" 
+                                Source="pack://application:,,,/C5SMSSystem;component/Resources/Add.png">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <ei:CallMethodAction MethodName="addconMouseLeftButtonDown" TargetObject="{Binding Path=DataContext, ElementName=ucSMSTest}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Image>
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="BorderBrush" Value="#FF5E5E5E" />
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding ="{Binding ElementName=addIcon, Path=IsMouseOver}" Value="true"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="BorderBrush" Value="Black" />
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding ="{Binding ElementName=ucSMSTest, Path=DataContext.TemplateCount}" Value="true">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </dx:DXTabItem>
+
+            <dx:DXTabItem Header="Log">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="grdSentTestLog" ItemsSource="{Binding SentTestMessages,UpdateSourceTrigger=PropertyChanged}" AutoPopulateColumns="False"
+                                                 MaxHeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=ActualHeight}">
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn Header="Sent Message" FieldName="SentMessage" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Sent Status" FieldName="SentStatus" ReadOnly="True"/>
+                            <dxg:GridColumn Header="Sent Date Time" FieldName="SentDateTime" ReadOnly="True" EditSettings="{dxe:DateSettings DisplayFormat=G}" AllowEditing="False"/>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowGroupPanel="False" AutoWidth="True" WaitIndicatorType="Panel" AllowCascadeUpdate="True"/>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <Button x:Name="btnSentMsgPrint" Content="Print/Export" Grid.Row="1" Command="{Binding Path=PrintExportCommand, Mode=Default}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10,0,0" MinWidth="80">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource MultiParamConv}">
+                                <Binding ElementName="grdSentTestLog" Path="View"></Binding>
+                                <Binding ElementName="ucSMSTest"></Binding>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                </Grid>
+            </dx:DXTabItem>
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <ei:CallMethodAction MethodName="smsTestTabControlSelectionChanged" TargetObject="{Binding}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </dx:DXTabControl>
+        <crtls:DialogManager x:Name="templatesDialog" DataContext="{Binding TemplatesDialog}" IsOpen="{Binding IsOpen}" Title="" DialogHeight="500" DialogWidth="400"  
+            DialogWindowStartupLocation="CenterOwner" DialogWindowStyle="None" CloseCommand="{Binding CloseCommand}"  />
+    </Grid>
+</UserControl>

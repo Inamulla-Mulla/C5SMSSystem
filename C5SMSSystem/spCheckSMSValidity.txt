@@ -1,0 +1,50 @@
+﻿IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[spCheckSMSValidity]') AND type in (N'P', N'PC'))
+exec('
+	Create PROCEDURE [dbo].[spCheckSMSValidity]
+ @SenderNumber VARCHAR(50),
+ @SMSValidity VARCHAR(20)
+ 
+ WITH ENCRYPTION
+ AS
+
+DECLARE @SQL VARCHAR(MAX)
+DECLARE @WhereClause VARCHAR(MAX) = ''''
+--DECLARE @TempVar VARCHAR(10) = ''''
+DEclare @tempSMSValidity VarChar(Max)
+
+Select @tempSMSValidity = sv.Validity from SMSValidity sv
+			Inner Join SMSUserPhone sup on sup.SMSUserID = sv.SMSUserID
+			Where sup.PhoneNumber = @SenderNumber 
+
+	IF @tempSMSValidity = ''Per Day''
+		BEGIN
+			SET @WhereClause = ''AND DATEPART(DY, ReceivedDateTime) = DATEPART(DY, GetDate()) ''
+		END
+	ELSE IF @tempSMSValidity = ''Per Week''
+		BEGIN
+			SET @WhereClause = ''AND DATEPART(WK, ReceivedDateTime) = DATEPART(WK, GetDate()) ''
+		END
+	ELSE IF @tempSMSValidity = ''Per Month''
+		BEGIN
+			SET @WhereClause = ''AND DATEPART(MM, ReceivedDateTime) = DATEPART(MM, GetDate()) ''
+		END
+	
+	SET @SQL = ''
+			IF EXISTS(SELECT SenderNumber, COUNT(*) TotalRequests FROM dbo.SMSRequests r
+			INNER JOIN dbo.SMSRequestsLog l ON r.MessageID = l.MessageID
+			WHERE SenderNumber =  ''''''+@SenderNumber+''''''
+			''+@WhereClause+'' 
+			AND YEAR(ReceivedDateTime) = YEAR(GetDate())
+			GROUP BY SenderNumber)
+				SELECT SenderNumber, COUNT(*) TotalRequests FROM dbo.SMSRequests r
+				INNER JOIN dbo.SMSRequestsLog l ON r.MessageID = l.MessageID
+				WHERE SenderNumber =  ''''''+@SenderNumber+''''''
+				''+@WhereClause+'' 
+				AND YEAR(ReceivedDateTime) = YEAR(GetDate())
+				GROUP BY SenderNumber
+			ELSE
+				SELECT ''''''+@SenderNumber+'''''' AS SenderNumber, 0 AS TotalRequests''
+    
+PRINT(@SQL) 
+EXEC(@SQL)
+')
