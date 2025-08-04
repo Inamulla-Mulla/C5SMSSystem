@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TemplateList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Template>
+    <TemplateID>1</TemplateID>
+    <Title>Welcome</Title>
+    <Text>Hello {uName} welcome to {sName} State Police SMS query based information retrieval system. 
+You have been authorised to use following services using {pNo} mobile number.
+Privileges : {pvlg}.</Text>
+  </Template>
+</TemplateList>
